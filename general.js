@@ -50,13 +50,15 @@ function getId(id) {
 }
 
 function loadJobsTable(jobs) {
-    for(i = 0; i < jobs.length; i++) {
-        let jobRow = createElementJobRow(jobs[i], i + 1);
-        let jobsBody = document.getElementById("jobsBody");
-        jobsBody.appendChild(jobRow);
+    let jobsBody = document.getElementById("jobsBody");
+    while (jobsBody.firstChild) {
+        jobsBody.removeChild(jobsBody.lastChild);
     }
 
-    loadJobsTable();
+    for(i = 0; i < jobs.length; i++) {
+        let jobRow = createElementJobRow(jobs[i], i + 1);
+        jobsBody.appendChild(jobRow);
+    }
 }
 
 function createElementJobRow(job, count) {
