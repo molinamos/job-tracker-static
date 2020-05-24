@@ -27,18 +27,19 @@ function postNewJob() {
 }
 
 function getUserJobs() {
-    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=testMolina";
+    if(username == null) {
+        return;
+    }
+
+    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + username;
 
     $.ajax({
         url: url,
         type: "GET",
         success: function (result) {
-            console.log("200");
-            console.log(result);
+            loadJobsTable(result.jobs);
         },
         error: function (error) {
-            console
-            .log("500");
             console.log(error);
         }
     });
@@ -46,4 +47,58 @@ function getUserJobs() {
 
 function getId(id) {
     return document.getElementById(id);
+}
+
+function loadJobsTable(jobs) {
+    for(i = 0; i < jobs.length; i++) {
+        let jobRow = createElementJobRow(jobs[i], i + 1);
+        let jobsBody = document.getElementById("jobsBody");
+        jobsBody.appendChild(jobRow);
+    }
+}
+
+function createElementJobRow(job, count) {
+    let tr = document.createElement("tr");
+    let number = document.createElement("th");
+    let url= document.createElement("td");
+    let company = document.createElement("td");
+    let position = document.createElement("td");
+    let description = document.createElement("td");
+    let date = document.createElement("td");
+    let status = document.createElement("td");
+
+    tr.appendChild(number);
+    tr.appendChild(url);
+    tr.appendChild(company);
+    tr.appendChild(company);
+    tr.appendChild(position);
+    tr.appendChild(description);
+    tr.appendChild(date);
+    tr.appendChild(status);
+
+    number.scope = "col";
+    number.innerText = count;
+    url.innerText = job.url;
+    company.innerText = job.company;
+    position.innerText = job.position;
+    description.innerText = job.description;
+    date.innerText = job.date;
+    status.innerText = job.status;
+
+    return tr;
+}
+
+function loadUsername() {
+    let boldUsername = document.getElementById("currentBoldUsername");
+    boldUsername.innerText = localStorage['username'] || 'NO USERNAME';
+    username = localStorage['username'] || null;
+
+    getUserJobs();
+}
+
+function setUsername() {
+    let newUsernameEle = document.getElementById("newUsername");
+    localStorage["username"] = newUsernameEle.value;
+    newUsernameEle.value = "";
+    loadUsername();
 }
