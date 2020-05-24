@@ -31,7 +31,7 @@ function getUserJobs() {
         return;
     }
 
-    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + username;
+    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + encodeURI(username);
 
     $.ajax({
         url: url,
