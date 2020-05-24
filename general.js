@@ -2,7 +2,7 @@ function postNewJob() {
     let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job";
     let data = new Object();
 
-    data.username = getId("formUsername").value;
+    data.username = username;
     data.url = getId("formUrl").value;
     data.company = getId("formCompany").value;
     data.position = getId("formPosition").value;
@@ -55,6 +55,8 @@ function loadJobsTable(jobs) {
         let jobsBody = document.getElementById("jobsBody");
         jobsBody.appendChild(jobRow);
     }
+
+    loadJobsTable();
 }
 
 function createElementJobRow(job, count) {
