@@ -106,3 +106,17 @@ function setUsername() {
     newUsernameEle.value = "";
     loadUsername();
 }
+
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  IdentityPoolId: 'us-west-2_SezkXITZB',
+  Logins: { // optional tokens, used for authenticated login
+    'graph.facebook.com': 'FBTOKEN',
+    'www.amazon.com': 'AMAZONTOKEN',
+    'accounts.google.com': 'GOOGLETOKEN'
+  }
+});
+
+var cognitoUrl = "https://job-tracker.auth.us-west-2.amazoncognito.com/signup?client_id=3t6mf6p7hog6nrdtk264vktphd&response_type=code&scope=email+openid&redirect_uri=" + encodeURI(window.location.href);
+function signIn() {
+   window.location.href = cognitoUrl;
+}
