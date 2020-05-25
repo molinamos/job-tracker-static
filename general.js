@@ -116,7 +116,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
   }
 });
 
-var cognitoUrl = "https://job-tracker.auth.us-west-2.amazoncognito.com/signup?client_id=3t6mf6p7hog6nrdtk264vktphd&response_type=code&scope=email+openid&redirect_uri=" + encodeURI(window.location.href);
+var cognitoUrl = "https://job-tracker.auth.us-west-2.amazoncognito.com/signup?client_id=3t6mf6p7hog6nrdtk264vktphd&response_type=code&scope=email+openid&redirect_uri=" + encodeURI(window.location.origin + window.location.pathname);
 function signIn() {
    window.location.href = cognitoUrl;
 }
