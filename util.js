@@ -38,3 +38,16 @@ function signOut() {
    localStorage.clear();
    window.location.href = window.location.origin + window.location.pathname;
 }
+
+function createEleWithTxt(type, text) {
+    let ele = document.createElement(type);
+    ele.innerText = text;
+    return ele;
+}
+
+function appendChildren(parent, ...children) {
+    let i;
+    for(i = 0; i < children.length; i++) {
+        parent.appendChild(children[i]);
+    }
+}

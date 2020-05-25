@@ -5,6 +5,7 @@ function finishLoading() {
 
     if(getUserTokenFromCache() || getUserTokenFromLocation()) {
         toggleSignOut();
+        getUserJobs();
     }
     else {
         updateUsername("NOT LOGGED IN");
@@ -62,6 +63,21 @@ function toggleSignOut() {
     toggleButtons(signOut, signIn);
 }
 
+function getUserJobs() {
+    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + encodeURI(username);
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (result) {
+            loadJobsTable(result.jobs);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
 function postNewJob() {
     let data = new Object();
 
@@ -87,25 +103,8 @@ function postNewJob() {
     .catch((error) => {
       console.error('Error:', error);
     });
-}
 
-function getUserJobs() {
-    if(username == null) {
-        return;
-    }
-
-    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + encodeURI(username);
-
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (result) {
-            loadJobsTable(result.jobs);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
+    window.location.reload();
 }
 
 function loadJobsTable(jobs) {
@@ -115,39 +114,27 @@ function loadJobsTable(jobs) {
     }
 
     for(i = 0; i < jobs.length; i++) {
-        let jobRow = createElementJobRow(jobs[i], i + 1);
+        let jobRow = createJobRow(jobs[i], i + 1);
         jobsBody.appendChild(jobRow);
     }
 }
 
-function createElementJobRow(job, count) {
+function createJobRow(job, count) {
     let tr = document.createElement("tr");
-    let number = document.createElement("th");
-    let url= document.createElement("td");
-    let company = document.createElement("td");
-    let position = document.createElement("td");
-    let description = document.createElement("td");
-    let date = document.createElement("td");
-    let status = document.createElement("td");
 
-    tr.appendChild(number);
-    tr.appendChild(url);
-    tr.appendChild(company);
-    tr.appendChild(company);
-    tr.appendChild(position);
-    tr.appendChild(description);
-    tr.appendChild(date);
-    tr.appendChild(status);
+    let number = createEleWithTxt("th", count);
+    let url= createEleWithTxt("td", job.url);
+    let company = createEleWithTxt("td", job.company);
+    let position = createEleWithTxt("td", job.position);
+    let description = createEleWithTxt("td", job.description);
+    let date = createEleWithTxt("td", job.date);
+    let status = createEleWithTxt("td", job.status);
 
     number.scope = "col";
-    number.innerText = count;
-    url.innerText = job.url;
-    company.innerText = job.company;
-    position.innerText = job.position;
-    description.innerText = job.description;
-    date.innerText = job.date;
-    status.innerText = job.status;
+
+    appendChildren(tr, number, url, company, position, description, date, status)
 
     return tr;
 }
+
 
