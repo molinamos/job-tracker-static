@@ -1,5 +1,68 @@
+var userToken = null;
+var username = null;
+
+function finishLoading() {
+
+    if(getUserTokenFromCache() || getUserTokenFromLocation()) {
+        toggleSignOut();
+    }
+    else {
+        updateUsername("NOT LOGGED IN");
+        toggleSignIn();
+    }
+}
+
+function getUserTokenFromCache() {
+    let raw = getFromLocal("userToken");
+
+    if(raw == null) {
+        return false;
+    }
+
+    return setToken(raw);
+}
+
+function getUserTokenFromLocation() {
+    let raw = window.location.hash.substring(0, window.location.hash.indexOf("&"))
+    if(raw == "") {
+        return;
+    }
+
+    return setToken(raw);
+}
+
+function setToken(raw) {
+    let token = new TokenHandler(raw);
+
+    if(token.isValid) {
+        saveToLocal("userToken", raw);
+        userToken = token;
+        updateUsername(token.username);
+
+        return true;
+    }
+
+    return false;
+}
+
+function updateUsername(newName) {
+    let boldUsername = document.getElementById("currentBoldUsername");
+    boldUsername.innerText = newName;
+}
+
+function toggleSignIn() {
+    let signIn = document.getElementById("signInButton");
+    let signOut = document.getElementById("signOutButton");
+    toggleButtons(signIn, signOut);
+}
+
+function toggleSignOut() {
+    let signIn = document.getElementById("signInButton");
+    let signOut = document.getElementById("signOutButton");
+    toggleButtons(signOut, signIn);
+}
+
 function postNewJob() {
-    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job";
     let data = new Object();
 
     data.username = username;
@@ -45,10 +108,6 @@ function getUserJobs() {
     });
 }
 
-function getId(id) {
-    return document.getElementById(id);
-}
-
 function loadJobsTable(jobs) {
     let jobsBody = document.getElementById("jobsBody");
     while (jobsBody.firstChild) {
@@ -92,31 +151,3 @@ function createElementJobRow(job, count) {
     return tr;
 }
 
-function loadUsername() {
-    let boldUsername = document.getElementById("currentBoldUsername");
-    boldUsername.innerText = localStorage['username'] || 'NO USERNAME';
-    username = localStorage['username'] || null;
-
-    getUserJobs();
-}
-
-function setUsername() {
-    let newUsernameEle = document.getElementById("newUsername");
-    localStorage["username"] = newUsernameEle.value;
-    newUsernameEle.value = "";
-    loadUsername();
-}
-
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-west-2_SezkXITZB',
-  Logins: { // optional tokens, used for authenticated login
-    'graph.facebook.com': 'FBTOKEN',
-    'www.amazon.com': 'AMAZONTOKEN',
-    'accounts.google.com': 'GOOGLETOKEN'
-  }
-});
-
-var cognitoUrl = "https://job-tracker.auth.us-west-2.amazoncognito.com/signup?client_id=3t6mf6p7hog6nrdtk264vktphd&response_type=code&scope=email+openid&redirect_uri=" + encodeURI(window.location.origin + window.location.pathname);
-function signIn() {
-   window.location.href = cognitoUrl;
-}
