@@ -89,22 +89,18 @@ function postNewJob() {
     data.date = getId("formDate").value;
     data.status = getId("formStatus").value;
 
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+    $.ajax({
+        url: url,
+        type: "PUT",
+        headers: { 'Content-Type': 'application/json' },
+        data: JSON.stringify(data),
+        success: function (result) {
+            window.location.reload();
+        },
+        error: function (error) {
+            window.location.reload();
+        }
     });
-
-    window.location.reload();
 }
 
 function loadJobsTable(jobs) {
