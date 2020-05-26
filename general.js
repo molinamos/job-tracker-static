@@ -89,6 +89,15 @@ function postNewJob() {
     data.date = getId("formDate").value;
     data.status = getId("formStatus").value;
 
+    clearValue(
+        getId("formUrl"),
+        getId("formCompany"),
+        getId("formPosition"),
+        getId("formDescription"),
+        getId("formDate"),
+        getId("formStatus")
+    );
+
     $.ajax({
         url: url,
         type: "PUT",
@@ -133,4 +142,9 @@ function createJobRow(job, count) {
     return tr;
 }
 
-
+function clearValue(...ele) {
+    let i;
+    for(i = 0; i < ele.length; i++) {
+        ele[[i]].value = "";
+    }
+}

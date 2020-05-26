@@ -13,3 +13,7 @@ To Do:
 Stretch Goals:
 - web scrapper testing to auto fill information
     
+
+Delete Item DyanamoDB
+
+https://stackoverflow.com/questions/42235202/delete-dynamodb-entries-with-aws-api
