@@ -1,6 +1,30 @@
 var userToken = null;
 var username = null;
 
+function loaded() {
+    toConsole("loaded");
+
+    let cognitoCode = findGetParameter("code");
+
+    if (cognitoCode != null) {
+        toConsole("code was found " + cognitoCode);
+        fetchUserTokens(cognitoCode);
+    }
+}
+
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
 function finishLoading() {
 
     if(getUserTokenFromCache() || getUserTokenFromLocation()) {
@@ -24,7 +48,10 @@ function getUserTokenFromCache() {
 }
 
 function getUserTokenFromLocation() {
-    let raw = window.location.hash.substring(0, window.location.hash.indexOf("&"))
+    let raw = window.location.hash;
+    raw = raw.substring(raw.indexOf("access_token=") + "access_token=".length);
+    raw = raw.substring(0, raw.indexOf("&"));
+
     if(raw == "") {
         return;
     }
@@ -36,9 +63,9 @@ function setToken(raw) {
     let token = new TokenHandler(raw);
 
     if(token.isValid) {
-        saveToLocal("userToken", raw);
+        saveToLocal("userToken", token.rawToken);
         userToken = token;
-        updateUsername(token.username);
+        updateUsername(token.getUsername());
 
         return true;
     }
@@ -48,7 +75,9 @@ function setToken(raw) {
 
 function updateUsername(newName) {
     let boldUsername = document.getElementById("currentBoldUsername");
-    boldUsername.innerText = newName;
+    if (boldUsername) {
+        boldUsername.innerText = newName;
+    }
 }
 
 function toggleSignIn() {

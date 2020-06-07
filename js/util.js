@@ -10,15 +10,11 @@ function getId(id) {
     return document.getElementById(id);
 }
 
-function saveToLocal(key, input) {
-    localStorage[key] = input;
-}
-
-function getFromLocal(key) {
-    return localStorage[key] || null;
-}
-
 function toggleButtons(ele1, ele2) {
+    if (!ele1 || !ele2) {
+        return;
+    }
+
     let ele1Display = getStyle(ele1, "display") == "none" ? "inline" : "none";
     let ele2Display = ele1Display == "none" ? "inline" : "none";
 
@@ -31,7 +27,8 @@ function getEpoch() {
 }
 
 function signIn() {
-   window.location.href = cognitoUrl;
+    saveToLocal(REDIRECT_URI, cognitoRedirectUri);
+    window.location.href = cognitoLoginUrl;
 }
 
 function signOut() {
@@ -50,4 +47,25 @@ function appendChildren(parent, ...children) {
     for(i = 0; i < children.length; i++) {
         parent.appendChild(children[i]);
     }
+}
+
+function toConsole(text) {
+    if (toLog) {
+        console.log(text);
+    }
+}
+
+function makeRestCall(url, method, headers, data, successCall, errorCall) {
+    $.ajax({
+        url: url,
+        type: method,
+        headers: headers,
+        data: data,
+        success: function (result) {
+            successCall(result)
+        },
+        error: function (error) {
+            errorCall(error);
+        }
+    });
 }

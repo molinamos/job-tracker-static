@@ -1,14 +1,15 @@
 class TokenHandler {
     constructor(rawToken) {
-        let token = jwt_decode(rawToken);
-        this.token = token;
         this.username = null;
+        this.rawToken = rawToken;
+
+        let token = jwt.WebTokenParser.parse(rawToken);
+        this.token = token;
+        this.payload = JSON.parse(jwt.base64urldecode(token.payloadSegment));
 
         if(!this.validateToken()) {
             return;
         }
-
-        this.getUsernameFromToken();
     }
 
     validateToken() {
@@ -16,21 +17,14 @@ class TokenHandler {
     }
 
     validateTokenExpiration() {
-        let expTime = this.token.exp;
+        let expTime = this.payload.exp;
         let curr = getEpoch();
 
         return curr < expTime;
     }
 
-    getUsernameFromToken() {
-        let tokenArrays = Object.entries(this.token);
-
-        let i;
-        for(i = 0; i < tokenArrays.length; i++) {
-            if(tokenArrays[i][0] == "cognito:username") {
-                this.username = tokenArrays[i][1];
-            }
-        }
+    getUsername() {
+        return this.payload["username"];
     }
 
     get isValid(){
