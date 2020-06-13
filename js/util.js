@@ -15,25 +15,19 @@ function toggleButtons(ele1, ele2) {
         return;
     }
 
-    let ele1Display = getStyle(ele1, "display") == "none" ? "inline" : "none";
-    let ele2Display = ele1Display == "none" ? "inline" : "none";
+    let ele1Display = getStyle(ele1, DISPLAY) == NONE ? INLINE : NONE;
+    let ele2Display = ele1Display == NONE ? INLINE : NONE;
 
-    setStyle(ele1, "display", ele1Display);
-    setStyle(ele2, "display", ele2Display);
+    setStyle(ele1, DISPLAY, ele1Display);
+    setStyle(ele2, DISPLAY, ele2Display);
 }
 
 function getEpoch() {
-    return Math.round(Date.now() / 1000)
+    return Math.floor(Date.now() / 1000)
 }
 
-function signIn() {
-    saveToLocal(REDIRECT_URI, cognitoRedirectUri);
-    window.location.href = cognitoLoginUrl;
-}
-
-function signOut() {
-   localStorage.clear();
-   window.location.href = window.location.origin + window.location.pathname;
+function isStillValid(expiration) {
+    return getEpoch() < expiration;
 }
 
 function createEleWithTxt(type, text) {
@@ -68,4 +62,19 @@ function makeRestCall(url, method, headers, data, successCall, errorCall) {
             errorCall(error);
         }
     });
+}
+
+function saveToLocal(key, input) {
+    localStorage[key] = input;
+}
+
+function getFromLocal(key) {
+    return localStorage[key] || null;
+}
+
+function updateUsername(newName) {
+    let boldUsername = document.getElementById("currentBoldUsername");
+    if (boldUsername) {
+        boldUsername.innerText = newName;
+    }
 }

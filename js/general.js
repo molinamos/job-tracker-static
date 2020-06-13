@@ -1,111 +1,3 @@
-var userToken = null;
-var username = null;
-
-function loaded() {
-    toConsole("loaded");
-
-    let cognitoCode = findGetParameter("code");
-
-    if (cognitoCode != null) {
-        toConsole("code was found " + cognitoCode);
-        fetchUserTokens(cognitoCode);
-    }
-}
-
-function findGetParameter(parameterName) {
-    var result = null,
-        tmp = [];
-    location.search
-        .substr(1)
-        .split("&")
-        .forEach(function (item) {
-          tmp = item.split("=");
-          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-        });
-    return result;
-}
-
-function finishLoading() {
-
-    if(getUserTokenFromCache() || getUserTokenFromLocation()) {
-        toggleSignOut();
-        getUserJobs();
-    }
-    else {
-        updateUsername("NOT LOGGED IN");
-        toggleSignIn();
-    }
-}
-
-function getUserTokenFromCache() {
-    let raw = getFromLocal("userToken");
-
-    if(raw == null) {
-        return false;
-    }
-
-    return setToken(raw);
-}
-
-function getUserTokenFromLocation() {
-    let raw = window.location.hash;
-    raw = raw.substring(raw.indexOf("access_token=") + "access_token=".length);
-    raw = raw.substring(0, raw.indexOf("&"));
-
-    if(raw == "") {
-        return;
-    }
-
-    return setToken(raw);
-}
-
-function setToken(raw) {
-    let token = new TokenHandler(raw);
-
-    if(token.isValid) {
-        saveToLocal("userToken", token.rawToken);
-        userToken = token;
-        updateUsername(token.getUsername());
-
-        return true;
-    }
-
-    return false;
-}
-
-function updateUsername(newName) {
-    let boldUsername = document.getElementById("currentBoldUsername");
-    if (boldUsername) {
-        boldUsername.innerText = newName;
-    }
-}
-
-function toggleSignIn() {
-    let signIn = document.getElementById("signInButton");
-    let signOut = document.getElementById("signOutButton");
-    toggleButtons(signIn, signOut);
-}
-
-function toggleSignOut() {
-    let signIn = document.getElementById("signInButton");
-    let signOut = document.getElementById("signOutButton");
-    toggleButtons(signOut, signIn);
-}
-
-function getUserJobs() {
-    let url = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=" + encodeURI(username);
-
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (result) {
-            loadJobsTable(result.jobs);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
-}
 
 function postNewJob() {
     let data = new Object();
@@ -141,7 +33,8 @@ function postNewJob() {
     });
 }
 
-function loadJobsTable(jobs) {
+function loadJobsTable(result) {
+    let jobs = result;
     let jobsBody = document.getElementById("jobsBody");
     while (jobsBody.firstChild) {
         jobsBody.removeChild(jobsBody.lastChild);
@@ -177,3 +70,5 @@ function clearValue(...ele) {
         ele[[i]].value = "";
     }
 }
+
+
