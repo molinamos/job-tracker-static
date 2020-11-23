@@ -5,13 +5,15 @@ var cognitoClientId = "4qgue6k8qbkrq1qt7bgf5ajt8v";
 var cognitoRedirectUri = encodeURI(window.location.origin + window.location.pathname.replace("index.html", "loading.html"));
 var cognitoIndexUri = encodeURI(window.location.origin + window.location.pathname.replace("loading.html", "index.html"));
 var cognitoLoginUrl = cognitoBaseUrl + "login?client_id=" + cognitoClientId + "&response_type=code&scope=openid&redirect_uri=" + cognitoRedirectUri;
-var apiGatewayJobByUsername = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job?username=";
+var apiGatewayJob = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job";
+var apiGatewayJobByUsername = apiGatewayJob + "?username=";
 
 //WEB STUFF
 var POST = "POST";
 var GET = "GET";
 var PUT = "PUT";
 var APP_X_FORM = "application/x-www-form-urlencoded";
+var APP_JSON = 'application/json';
 
 //TOKEN STUFF
 var CLIENT_ID = "client_id";
@@ -27,6 +29,7 @@ var EXPIRES_IN = "expires_in";
 var ACCESS_TOKEN_EXP = "access_token_exp";
 var ID_TOKEN_EXP = "id_token_exp";
 var REFRESH_TOKEN_EXP = "refresh_token_exp";
+var AUTHORIZATION = "Authorization";
 var SEVEN_DAYS_EPOCH = 604800;
 
 //USER STUFF

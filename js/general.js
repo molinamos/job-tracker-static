@@ -1,5 +1,12 @@
 
+var postNewJobData;
 function postNewJob() {
+    let url = apiGatewayJob;
+
+    let headers = {};
+    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+    headers[CONTENT_TYPE] = APP_JSON;
+
     let data = new Object();
 
     data.username = username;
@@ -10,6 +17,8 @@ function postNewJob() {
     data.date = getId("formDate").value;
     data.status = getId("formStatus").value;
 
+    postNewJobData = data;
+
     clearValue(
         getId("formUrl"),
         getId("formCompany"),
@@ -19,38 +28,14 @@ function postNewJob() {
         getId("formStatus")
     );
 
-    $.ajax({
-        url: url,
-        type: "PUT",
-        headers: { 'Content-Type': 'application/json' },
-        data: JSON.stringify(data),
-        success: function (result) {
-            window.location.reload();
-        },
-        error: function (error) {
-            window.location.reload();
-        }
-    });
+    makeRestCall(url, PUT, headers, JSON.stringify(data), post, toConsole);
 }
 
-function loadJobsTable(result) {
-    let jobs = result;
-    let jobsBody = document.getElementById("jobsBody");
-    while (jobsBody.firstChild) {
-        jobsBody.removeChild(jobsBody.lastChild);
-    }
-
-    for(i = 0; i < jobs.length; i++) {
-        let jobRow = createJobRow(jobs[i], i + 1);
-        jobsBody.appendChild(jobRow);
-    }
-}
-
-function createJobRow(job, count) {
-    let tr = document.createElement("tr");
+function postNewJobSuccessful(result) {
+   let tr = document.createElement("tr");
 
     let number = createEleWithTxt("th", count);
-    let url= createEleWithTxt("td", job.url);
+    let url= createEleWithTxt("td", job["url-hash"]);
     let company = createEleWithTxt("td", job.company);
     let position = createEleWithTxt("td", job.position);
     let description = createEleWithTxt("td", job.description);
@@ -60,9 +45,28 @@ function createJobRow(job, count) {
     number.scope = "col";
 
     appendChildren(tr, number, url, company, position, description, date, status)
-
-    return tr;
 }
+
+function postNewJobError(result) {
+
+}
+
+function loadJobsTable(result) {
+    let jobs = result;
+
+    let jobsBody = document.getElementById("jobsBody");
+    while (jobsBody.firstChild) {
+        jobsBody.removeChild(jobsBody.lastChild);
+    }
+
+    for(i = 0; i < jobs.length; i++) {
+        let job = jobs[i];
+        pushTableJob(job["url-hash"], job.company, job.position, job.date, job.status);
+    }
+    updateTableJob();
+}
+
+
 
 function clearValue(...ele) {
     let i;
