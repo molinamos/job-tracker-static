@@ -70,6 +70,12 @@ function updateTableJob() {
     }
 }
 
+function clearTableJob() {
+    while(jobsBody.childNodes.length > 0) {
+        jobsBody.childNodes[0].remove();
+    }
+}
+
 function createJobRow(job, count) {
     let tr = document.createElement("tr");
 

@@ -28,28 +28,15 @@ function postNewJob() {
         getId("formStatus")
     );
 
-    makeRestCall(url, PUT, headers, JSON.stringify(data), post, toConsole);
+    makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, toConsole);
 }
 
 function postNewJobSuccessful(result) {
-   let tr = document.createElement("tr");
-
-    let number = createEleWithTxt("th", count);
-    let url= createEleWithTxt("td", job["url-hash"]);
-    let company = createEleWithTxt("td", job.company);
-    let position = createEleWithTxt("td", job.position);
-    let description = createEleWithTxt("td", job.description);
-    let date = createEleWithTxt("td", job.date);
-    let status = createEleWithTxt("td", job.status);
-
-    number.scope = "col";
-
-    appendChildren(tr, number, url, company, position, description, date, status)
+    pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.status);
+    clearTableJob();
+    updateTableJob();
 }
 
-function postNewJobError(result) {
-
-}
 
 function loadJobsTable(result) {
     let jobs = result;
