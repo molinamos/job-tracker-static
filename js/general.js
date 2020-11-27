@@ -37,6 +37,25 @@ function postNewJob() {
     makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, toConsole);
 }
 
+function deleteJob(urlHash) {
+    let url = apiGatewayJob;
+
+    let headers = {};
+    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+    headers[CONTENT_TYPE] = APP_JSON;
+
+    let data = new Object();
+
+    data.username = username;
+    data.url = urlHash;
+
+    makeRestCall(url, DELETE, headers, JSON.stringify(data), deleteJobSuccessful, toConsole);
+}
+
+function deleteJobSuccessful(result) {
+    window.location.reload();
+}
+
 function postNewJobSuccessful(result) {
     pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.status);
     clearTableJob();
@@ -104,9 +123,17 @@ function createJobRow(job, count) {
     let date = createEleWithTxt("td", job.date);
     let status = createEleWithTxt("td", job.status);
 
+    let deleteTxt = createEleWithTxt("button", "x");
+    let deleteJob = document.createElement("td");
+    appendChildren(deleteJob, deleteTxt);
+
+    deleteTxt.cli
+
+    deleteTxt.setAttribute("onclick", "deleteJob(\"" + job.url + "\")");
+
     number.scope = "col";
 
-    appendChildren(tr, number, url, company, position, description, date, status)
+    appendChildren(tr, number, url, company, position, description, date, status, deleteJob);
     let jobsBody = document.getElementById("jobsBody");
     appendChildren(jobsBody, tr)
 }

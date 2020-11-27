@@ -12,6 +12,7 @@ var apiGatewayJobByUsername = apiGatewayJob + "?username=";
 var POST = "POST";
 var GET = "GET";
 var PUT = "PUT";
+var DELETE = "DELETE";
 var APP_X_FORM = "application/x-www-form-urlencoded";
 var APP_JSON = 'application/json';
 

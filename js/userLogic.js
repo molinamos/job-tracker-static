@@ -22,12 +22,6 @@ function noToken() {
     toggleSignIn();
 }
 
-function getUserJobs() {
-    let url = apiGatewayJobByUsername + encodeURI(username);
-    let headers = {};
-    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
-    makeRestCall(url, GET, headers, null, loadJobsTable, toConsole);
-}
 
 function signIn() {
     saveToLocal(REDIRECT_URI, cognitoRedirectUri);
