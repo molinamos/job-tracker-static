@@ -37,6 +37,7 @@ function postNewJob() {
     makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, toConsole);
 }
 
+var deleteJobUrl;
 function deleteJob(urlHash) {
     let url = apiGatewayJob;
 
@@ -49,11 +50,23 @@ function deleteJob(urlHash) {
     data.username = username;
     data.url = urlHash;
 
+    deleteJobUrl = urlHash;
+
     makeRestCall(url, DELETE, headers, JSON.stringify(data), deleteJobSuccessful, toConsole);
 }
 
 function deleteJobSuccessful(result) {
-    window.location.reload();
+    for(i = 0; i < tableJobs.length; i++) {
+        let job = tableJobs[i];
+
+        if (job.url === deleteJobUrl) {
+            tableJobs.splice(i, 1);
+            break;
+        }
+    }
+
+     clearTableJob();
+     updateTableJob();
 }
 
 function postNewJobSuccessful(result) {
@@ -107,6 +120,8 @@ function updateTableJob() {
 }
 
 function clearTableJob() {
+    let jobsBody = document.getElementById("jobsBody");
+
     while(jobsBody.childNodes.length > 0) {
         jobsBody.childNodes[0].remove();
     }
