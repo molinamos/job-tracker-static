@@ -223,23 +223,46 @@ function editJobRow (editButton) {
 }
 
 $('#jobModal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget);
-  var title = button.data('title');
-  var jobRow = button.data('job-row');
+    var button = $(event.relatedTarget);
+    var title = button.data('title');
+    var jobRow = button.data('job-row');
 
-  var modal = $(this);
-  modal.find('.modal-title').text(title)
+    var modal = $(this);
+    modal.find('.modal-title').text(title)
 
-  if(jobRow !== undefined) {
     let jobsBody = document.getElementById('jobsBody');
     let row = jobsBody.childNodes[jobRow];
-    modal.find('#formUrl')[0].value = row.childNodes[1].innerText;
-    modal.find('#formCompany')[0].value = row.childNodes[2].innerText;
-    modal.find('#formPosition')[0].value = row.childNodes[3].innerText;
-    modal.find('#formDescription')[0].value = row.childNodes[4].innerText;
-    modal.find('#formDate')[0].value = row.childNodes[5].innerText;
-    modal.find('#formStatus')[0].value = row.childNodes[6].innerText;
-  }
+
+    let formUrl;
+    let formCompany;
+    let formPosition;
+    let formDescription;
+    let formDate;
+    let formStatus;
+
+    if(jobRow !== undefined) {
+        formUrl = row.childNodes[1].innerText;
+        formCompany = row.childNodes[2].innerText;
+        formPosition = row.childNodes[3].innerText;
+        formDescription = row.childNodes[4].innerText;
+        formDate = row.childNodes[5].innerText;
+        formStatus = row.childNodes[6].innerText;
+    } else {
+        formUrl = "";
+        formCompany = "";
+        formPosition = "";
+        formDescription = "";
+        formDate = "";
+        formStatus = "";
+    }
+
+    
+    modal.find('#formUrl')[0].value = formUrl;
+    modal.find('#formCompany')[0].value = formCompany;
+    modal.find('#formPosition')[0].value = formPosition;
+    modal.find('#formDescription')[0].value = formDescription;
+    modal.find('#formDate')[0].value = formDate;
+    modal.find('#formStatus')[0].value = formStatus;
 });
 
 
