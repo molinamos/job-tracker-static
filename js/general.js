@@ -20,7 +20,7 @@ function postNewJob() {
     data.company = getId("formCompany").value;
     data.position = getId("formPosition").value;
     data.description = getId("formDescription").value;
-    data.date = new Date(getId("formDate").value).toLocaleDateString();
+    data.date = new Date(getId("formDate").value).toISOString();
     data.cooldown = getId("formCooldown").value;
     data.status = getId("formStatus").value;
 
@@ -41,13 +41,17 @@ function postNewJob() {
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
     headers[CONTENT_TYPE] = APP_JSON;
 
-    makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, toConsole);
+    makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, postNewJobError);
 }
 
 function postNewJobSuccessful(result) {
     pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.cooldown, postNewJobData.status);
     clearTableJob();
     updateTableJob();
+}
+
+function postNewJobError(result) {
+    alert(result.responseJSON.errorCode + ": " + result.responseJSON.errorMessage);
 }
 
 function deleteJob() {
@@ -64,7 +68,7 @@ function deleteJob() {
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
     headers[CONTENT_TYPE] = APP_JSON;
 
-    makeRestCall(url, DELETE, headers, JSON.stringify(data), deleteJobSuccessful, toConsole);
+    makeRestCall(url, DELETE, headers, JSON.stringify(data), deleteJobSuccessful, deleteJobError);
 }
 
 function deleteJobSuccessful(result) {
@@ -79,6 +83,10 @@ function deleteJobSuccessful(result) {
 
      clearTableJob();
      updateTableJob();
+}
+
+function deleteJobError(result) {
+    alert(result.responseJSON.errorCode + ": " + result.responseJSON.errorMessage);
 }
 
 function loadJobsTable(result) {
@@ -163,7 +171,14 @@ function createJobRow(job, count) {
     let company = createEleWithTxt("td", job.company);
     let position = createEleWithTxt("td", job.position);
     let description = createEleWithTxt("td", job.description);
-    let date = createEleWithTxt("td", job.date);
+
+    let dateObj = new Date(job.date);
+    let dateText = 
+            ((dateObj.getUTCMonth() + 1) < 10 ? "0" + (dateObj.getUTCMonth() + 1) : (dateObj.getUTCMonth() + 1))
+            + "/" + (dateObj.getUTCDate() < 10 ? "0" + dateObj.getUTCDate() : dateObj.getUTCDate())
+            + "/" +  dateObj.getFullYear() ;
+
+    let date = createEleWithTxt("td", dateText);
     let cooldown = createEleWithTxt("td", job.cooldown);
     let status = createEleWithTxt("td", job.status);
     let updateJob = document.createElement("td");
@@ -173,7 +188,8 @@ function createJobRow(job, count) {
     }
 
     number.scope = "col";
-    let urlButton = createEleWithTxt("button", "Copy");
+    let urlButton = createEleWithTxt("button", "Copy URL");
+    urlButton.style["min-width"] = "100px";
     urlButton.setAttribute("data-toggle", "popover");
     urlButton.setAttribute("type", "button");
     urlButton.setAttribute("class", "btn btn-info");
@@ -246,7 +262,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
         jobDeleteDisplay = NONE;
     }
 
-    formDate = formDate.getFullYear() + "-" + ((formDate.getMonth() + 1) < 10 ? "0" + (formDate.getMonth() + 1) : (formDate.getMonth() + 1)) + "-" + (formDate.getDate() < 10 ? "0" + formDate.getDate() : formDate.getDate());
+    formDate = formDate.getFullYear() + "-" + ((formDate.getUTCMonth() + 1) < 10 ? "0" + (formDate.getUTCMonth() + 1) : (formDate.getUTCMonth() + 1)) + "-" + (formDate.getUTCDate() < 10 ? "0" + formDate.getUTCDate() : formDate.getUTCDate());
     document.getElementById("jobModalDeleteButton").style[DISPLAY] = jobDeleteDisplay;
 
     modal.find('#formUrl')[0].value = formUrl;
