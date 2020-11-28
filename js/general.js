@@ -239,6 +239,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
     let formDescription;
     let formDate;
     let formStatus;
+    let jobDeleteDisplay;
 
     if(jobRow !== undefined) {
         formUrl = row.childNodes[1].innerText;
@@ -247,6 +248,9 @@ $('#jobModal').on('show.bs.modal', function (event) {
         formDescription = row.childNodes[4].innerText;
         formDate = row.childNodes[5].innerText;
         formStatus = row.childNodes[6].innerText;
+
+        jobDeleteDisplay = INLINE;
+
     } else {
         formUrl = "";
         formCompany = "";
@@ -254,9 +258,12 @@ $('#jobModal').on('show.bs.modal', function (event) {
         formDescription = "";
         formDate = "";
         formStatus = "";
+
+        jobDeleteDisplay = NONE;
     }
 
-    
+    document.getElementById("jobModalDeleteButton").style[DISPLAY] = jobDeleteDisplay;
+
     modal.find('#formUrl')[0].value = formUrl;
     modal.find('#formCompany')[0].value = formCompany;
     modal.find('#formPosition')[0].value = formPosition;
