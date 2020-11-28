@@ -12,6 +12,26 @@ function getUserJobs() {
     makeRestCall(url, GET, headers, null, loadJobsTable, toConsole);
 }
 
+function loadJobsTable(result) {
+    toConsole(result);
+    let jobs = result["Items"];
+    LastEvaluatedKey = result["LastEvaluatedKey"].urlHash;
+
+    if (LastEvaluatedKey !== undefined) {
+        document.getElementById("jobNextButton").style[DISPLAY] = INLINE;
+    } else {
+        document.getElementById("jobNextButton").style[DISPLAY] = NONE;
+    }
+
+    for(i = 0; i < jobs.length; i++) {
+        let job = jobs[i];
+        pushTableJob(job["urlHash"], job.company, job.position, job.description, job.date, job.cooldown, job.status);
+    }
+
+    clearTableJob();
+    updateTableJob();
+}
+
 function postNewJob() {
     let data = new Object();
 
@@ -87,18 +107,6 @@ function deleteJobSuccessful(result) {
 
 function deleteJobError(result) {
     alert(result.responseJSON.errorCode + ": " + result.responseJSON.errorMessage);
-}
-
-function loadJobsTable(result) {
-    let jobs = result;
-
-    for(i = 0; i < jobs.length; i++) {
-        let job = jobs[i];
-        pushTableJob(job["url-hash"], job.company, job.position, job.description, job.date, job.cooldown, job.status);
-    }
-
-    clearTableJob();
-    updateTableJob();
 }
 
 function clearValue(...ele) {
