@@ -77,4 +77,6 @@ function updateUsername(newName) {
     if (boldUsername) {
         boldUsername.innerText = newName;
     }
+
+    boldUsername.style.display = INLINE;
 }
