@@ -20,6 +20,10 @@ function hasToken() {
 function noToken() {
     updateUsername(NOT_LOGGED_IN);
     toggleSignIn();
+
+    let notSignedIn = document.getElementById("notSignedInBody");
+    let signedIn = document.getElementById("signedInBody");
+    toggleButtons(notSignedIn, signedIn);
 }
 
 
