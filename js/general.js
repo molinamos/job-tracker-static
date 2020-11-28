@@ -169,7 +169,7 @@ function createJobRow(job, count) {
     let updateJob = document.createElement("td");
 
     if (compareDays(job.date, job.cooldown)) {
-        tr.setAttribute("class", "table-danger");
+        tr.setAttribute("class", "table-warning");
     }
 
     number.scope = "col";
