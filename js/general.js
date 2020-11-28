@@ -20,7 +20,8 @@ function postNewJob() {
     data.company = getId("formCompany").value;
     data.position = getId("formPosition").value;
     data.description = getId("formDescription").value;
-    data.date = getId("formDate").value;
+    data.date = new Date(getId("formDate").value).toLocaleDateString();
+    data.cooldown = getId("formCooldown").value;
     data.status = getId("formStatus").value;
 
     postNewJobData = data;
@@ -44,7 +45,7 @@ function postNewJob() {
 }
 
 function postNewJobSuccessful(result) {
-    pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.status);
+    pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.cooldown, postNewJobData.status);
     clearTableJob();
     updateTableJob();
 }
@@ -85,7 +86,7 @@ function loadJobsTable(result) {
 
     for(i = 0; i < jobs.length; i++) {
         let job = jobs[i];
-        pushTableJob(job["url-hash"], job.company, job.position, job.description, job.date, job.status);
+        pushTableJob(job["url-hash"], job.company, job.position, job.description, job.date, job.cooldown, job.status);
     }
 
     clearTableJob();
@@ -100,13 +101,14 @@ function clearValue(...ele) {
     }
 }
 
-function pushTableJob(urlHash, company, position, description, date, status) {
+function pushTableJob(urlHash, company, position, description, date, cooldown, status) {
     var job = new Object();
     job.url = urlHash;
     job.company = company;
     job.position = position;
     job.description = description;
     job.date = date;
+    job.cooldown = cooldown;
     job.status = status;
 
     var subTableJobs = [];
@@ -162,8 +164,13 @@ function createJobRow(job, count) {
     let position = createEleWithTxt("td", job.position);
     let description = createEleWithTxt("td", job.description);
     let date = createEleWithTxt("td", job.date);
+    let cooldown = createEleWithTxt("td", job.cooldown);
     let status = createEleWithTxt("td", job.status);
     let updateJob = document.createElement("td");
+
+    if (compareDays(job.date, job.cooldown)) {
+        tr.setAttribute("class", "table-danger");
+    }
 
     number.scope = "col";
     let urlButton = createEleWithTxt("button", "Copy");
@@ -180,7 +187,7 @@ function createJobRow(job, count) {
 
     appendChildren(updateJob, createJobRowButtonUpdate(count));
     appendChildren(url, urlButton);
-    appendChildren(tr, number, url, company, position, description, date, status, updateJob);
+    appendChildren(tr, number, url, company, position, description, date, cooldown, status, updateJob);
     appendChildren(jobsBody, tr)
 }
 
@@ -212,6 +219,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
     let formPosition;
     let formDescription;
     let formDate;
+    let formCooldown;
     let formStatus;
     let jobDeleteDisplay;
 
@@ -220,24 +228,25 @@ $('#jobModal').on('show.bs.modal', function (event) {
         formCompany = job.company;
         formPosition = job.position;
         formDescription = job.description;
-        formDate = job.date;
+        formDate = new Date(job.date);
+        formCooldown = job.cooldown;
         formStatus = job.status;
 
         jobDeleteDisplay = INLINE;
 
     } else {
-        let date = new Date();
-
         formUrl = "";
         formCompany = "";
         formPosition = "";
         formDescription = "";
-        formDate = date.getMonth() + 1 + "/" + date.getDay() + "/" + date.getFullYear();;
+        formDate = new Date();
+        formCooldown = 90;
         formStatus = "";
 
         jobDeleteDisplay = NONE;
     }
 
+    formDate = formDate.getFullYear() + "-" + ((formDate.getMonth() + 1) < 10 ? "0" + (formDate.getMonth() + 1) : (formDate.getMonth() + 1)) + "-" + (formDate.getDate() < 10 ? "0" + formDate.getDate() : formDate.getDate());
     document.getElementById("jobModalDeleteButton").style[DISPLAY] = jobDeleteDisplay;
 
     modal.find('#formUrl')[0].value = formUrl;
@@ -245,6 +254,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
     modal.find('#formPosition')[0].value = formPosition;
     modal.find('#formDescription')[0].value = formDescription;
     modal.find('#formDate')[0].value = formDate;
+    modal.find('#formCooldown')[0].value = formCooldown;
     modal.find('#formStatus')[0].value = formStatus;
 });
 
@@ -256,5 +266,6 @@ function copyJobUrlToClipBoard(jobNumber) {
     }, function(err) {
         toConsole(err);
     });
-
 }
+
+
