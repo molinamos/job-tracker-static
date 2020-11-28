@@ -82,5 +82,5 @@ function updateUsername(newName) {
 }
 
 function compareDays(inputDate, days) {
-    return Math.round((new Date()-new Date(inputDate))/(1000*60*60*24)) >= days;
+    return Math.round((new Date()-new Date(inputDate))/(1000*60*60*24)) > days;
 }
