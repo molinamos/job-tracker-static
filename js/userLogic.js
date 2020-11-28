@@ -26,7 +26,6 @@ function noToken() {
     toggleButtons(notSignedIn, signedIn);
 }
 
-
 function signIn() {
     saveToLocal(REDIRECT_URI, cognitoRedirectUri);
     window.location.href = cognitoLoginUrl;

@@ -2,8 +2,8 @@
 var cognitoBaseUrl = "https://job-tracker.auth.us-west-2.amazoncognito.com/"
 var cognitoTokenUrl = cognitoBaseUrl + "oauth2/token";
 var cognitoClientId = "4qgue6k8qbkrq1qt7bgf5ajt8v";
-var cognitoRedirectUri = encodeURI(window.location.origin + window.location.pathname.replace("index.html", "loading.html"));
-var cognitoIndexUri = encodeURI(window.location.origin + window.location.pathname.replace("loading.html", "index.html"));
+var cognitoRedirectUri = encodeURI(window.location.origin + window.location.pathname.replace("index.html", "loading.html").replace("about.html", "loading.html"));
+var cognitoIndexUri = encodeURI(window.location.origin + window.location.pathname.replace("loading.html", "index.html").replace("about.html", "loading.html"));
 var cognitoLoginUrl = cognitoBaseUrl + "login?client_id=" + cognitoClientId + "&response_type=code&scope=openid&redirect_uri=" + cognitoRedirectUri;
 var apiGatewayJob = "https://2q8vgan9uj.execute-api.us-west-2.amazonaws.com/prod/job";
 var apiGatewayJobByUsername = apiGatewayJob + "?username=";

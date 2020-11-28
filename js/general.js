@@ -1,18 +1,18 @@
+var postNewJobData;
+var deleteJobUrl;
+var tableJobs = [];
+var hideUrls = true;
+
 function getUserJobs() {
     let url = apiGatewayJobByUsername + encodeURI(username);
     let headers = {};
+
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+
     makeRestCall(url, GET, headers, null, loadJobsTable, toConsole);
 }
 
-var postNewJobData;
 function postNewJob() {
-    let url = apiGatewayJob;
-
-    let headers = {};
-    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
-    headers[CONTENT_TYPE] = APP_JSON;
-
     let data = new Object();
 
     data.username = username;
@@ -34,24 +34,34 @@ function postNewJob() {
         getId("formStatus")
     );
 
+    let url = apiGatewayJob;
+    let headers = {};
+    
+    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+    headers[CONTENT_TYPE] = APP_JSON;
+
     makeRestCall(url, PUT, headers, JSON.stringify(data), postNewJobSuccessful, toConsole);
 }
 
-var deleteJobUrl;
+function postNewJobSuccessful(result) {
+    pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.status);
+    clearTableJob();
+    updateTableJob();
+}
+
 function deleteJob() {
     let url = apiGatewayJob;
     let urlHash = document.getElementById("formUrl").value;
-
-    let headers = {};
-    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
-    headers[CONTENT_TYPE] = APP_JSON;
 
     let data = new Object();
 
     data.username = username;
     data.url = urlHash;
-
     deleteJobUrl = urlHash;
+
+    let headers = {};
+    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+    headers[CONTENT_TYPE] = APP_JSON;
 
     makeRestCall(url, DELETE, headers, JSON.stringify(data), deleteJobSuccessful, toConsole);
 }
@@ -70,38 +80,26 @@ function deleteJobSuccessful(result) {
      updateTableJob();
 }
 
-function postNewJobSuccessful(result) {
-    pushTableJob(postNewJobData.url, postNewJobData.company, postNewJobData.position, postNewJobData.description, postNewJobData.date, postNewJobData.status);
-    clearTableJob();
-    updateTableJob();
-}
-
-
 function loadJobsTable(result) {
     let jobs = result;
-
-    let jobsBody = document.getElementById("jobsBody");
-    while (jobsBody.firstChild) {
-        jobsBody.removeChild(jobsBody.lastChild);
-    }
 
     for(i = 0; i < jobs.length; i++) {
         let job = jobs[i];
         pushTableJob(job["url-hash"], job.company, job.position, job.description, job.date, job.status);
     }
+
+    clearTableJob();
     updateTableJob();
 }
 
-
-
 function clearValue(...ele) {
     let i;
+
     for(i = 0; i < ele.length; i++) {
         ele[[i]].value = "";
     }
 }
 
-var tableJobs = [];
 function pushTableJob(urlHash, company, position, description, date, status) {
     var job = new Object();
     job.url = urlHash;
@@ -114,6 +112,7 @@ function pushTableJob(urlHash, company, position, description, date, status) {
     var subTableJobs = [];
 
     //During an update we check if the job is already there and if it is, replace it.
+    let i;
     for (i = 0; i < tableJobs.length; i++) {
         if (job.url === tableJobs[i].url) {
 
@@ -134,13 +133,15 @@ function pushTableJob(urlHash, company, position, description, date, status) {
     } else {
         tableJobs = subTableJobs;
     }
-    
 }
 
 function updateTableJob() {
+    let i;
     for (i = 0; i < tableJobs.length; i++) {
         createJobRow(tableJobs[i], i);
     }
+
+    $('[data-toggle="popover"]').popover();
 }
 
 function clearTableJob() {
@@ -152,24 +153,34 @@ function clearTableJob() {
 }
 
 function createJobRow(job, count) {
-    let tr = document.createElement("tr");
+    let jobsBody = document.getElementById("jobsBody");
 
+    let tr = document.createElement("tr");
     let number = createEleWithTxt("th", count);
-    let url= createEleWithTxt("td", job.url);
+    let url= document.createElement("td");
     let company = createEleWithTxt("td", job.company);
     let position = createEleWithTxt("td", job.position);
     let description = createEleWithTxt("td", job.description);
     let date = createEleWithTxt("td", job.date);
     let status = createEleWithTxt("td", job.status);
-
     let updateJob = document.createElement("td");
-    appendChildren(updateJob, createJobRowButtonUpdate(count));
-
 
     number.scope = "col";
+    let urlButton = createEleWithTxt("button", "Copy");
+    urlButton.setAttribute("data-toggle", "popover");
+    urlButton.setAttribute("type", "button");
+    urlButton.setAttribute("class", "btn btn-info");
+    urlButton.setAttribute("data-content", "Copied url to clipboard!");
+    urlButton.setAttribute("data-delay", 100);
+    urlButton.setAttribute("onclick", "copyJobUrlToClipBoard(" + count + ")");
 
+    urlButton.onmouseout = function(event) {
+        $(event.target).popover('hide');
+    }
+
+    appendChildren(updateJob, createJobRowButtonUpdate(count));
+    appendChildren(url, urlButton);
     appendChildren(tr, number, url, company, position, description, date, status, updateJob);
-    let jobsBody = document.getElementById("jobsBody");
     appendChildren(jobsBody, tr)
 }
 
@@ -186,52 +197,15 @@ function createJobRowButtonUpdate(rowNumber) {
     return changeButton;
 }
 
-function createJobRowEditButton() {
-    let editButton = createEleWithTxt("button", "edit");
-    editButton.setAttribute("onclick", "editJobRow(this)");
-    editButton.setAttribute("class", "btn btn-light");
-    return editButton;
-}
-
-function createJobRowConfirmButton() {
-    let confirmButton = createEleWithTxt("button", "✓")
-    confirmButton.setAttribute("class", "btn btn-primary");
-    return confirmButton;
-}
-
-function createJobRowCancelButton() {
-    let cancelButton = createEleWithTxt("button", "✗");
-    cancelButton.setAttribute("class", "btn btn-secondary");
-    return cancelButton;
-}
-
-function createJobRowDeleteButton() {
-    let deleteButton = createEleWithTxt("button", "delete");
-    deleteButton.setAttribute("class", "btn btn-light");
-    return deleteButton;
-}
-
-function editJobRow (editButton) {
-    let row = editButton.parentElement.parentElement;
-
-    row.setAttribute("class", "table-light");
-    row.childNodes[row.childNodes.length - 1].remove();
-
-    let buttonTd = document.createElement("td");
-    appendChildren(buttonTd, createJobRowConfirmButton(), createJobRowCancelButton());
-    appendChildren(row, buttonTd);
-}
-
 $('#jobModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var title = button.data('title');
-    var jobRow = button.data('job-row');
+    let button = $(event.relatedTarget);
+    let title = button.data('title');
+    let jobRow = button.data('job-row');
 
-    var modal = $(this);
+    let modal = $(this);
     modal.find('.modal-title').text(title)
 
-    let jobsBody = document.getElementById('jobsBody');
-    let row = jobsBody.childNodes[jobRow];
+    let job = tableJobs[jobRow];
 
     let formUrl;
     let formCompany;
@@ -242,21 +216,23 @@ $('#jobModal').on('show.bs.modal', function (event) {
     let jobDeleteDisplay;
 
     if(jobRow !== undefined) {
-        formUrl = row.childNodes[1].innerText;
-        formCompany = row.childNodes[2].innerText;
-        formPosition = row.childNodes[3].innerText;
-        formDescription = row.childNodes[4].innerText;
-        formDate = row.childNodes[5].innerText;
-        formStatus = row.childNodes[6].innerText;
+        formUrl = job.url;
+        formCompany = job.company;
+        formPosition = job.position;
+        formDescription = job.description;
+        formDate = job.date;
+        formStatus = job.status;
 
         jobDeleteDisplay = INLINE;
 
     } else {
+        let date = new Date();
+
         formUrl = "";
         formCompany = "";
         formPosition = "";
         formDescription = "";
-        formDate = "";
+        formDate = date.getMonth() + 1 + "/" + date.getDay() + "/" + date.getFullYear();;
         formStatus = "";
 
         jobDeleteDisplay = NONE;
@@ -273,3 +249,12 @@ $('#jobModal').on('show.bs.modal', function (event) {
 });
 
 
+function copyJobUrlToClipBoard(jobNumber) {
+    let job = tableJobs[jobNumber];
+
+    navigator.clipboard.writeText(job.url).then(function() {
+    }, function(err) {
+        toConsole(err);
+    });
+
+}
