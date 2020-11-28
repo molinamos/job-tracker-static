@@ -216,6 +216,7 @@ function createJobRowButtonUpdate(rowNumber) {
     changeButton.setAttribute("data-target", "#jobModal");
     changeButton.setAttribute("data-title", "Update Job");
     changeButton.setAttribute("data-job-row", rowNumber);
+    changeButton.setAttribute("data-active-url", false);
 
     return changeButton;
 }
@@ -224,6 +225,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
     let button = $(event.relatedTarget);
     let title = button.data('title');
     let jobRow = button.data('job-row');
+    let activeUrl = button.data('active-url');
 
     let modal = $(this);
     modal.find('.modal-title').text(title)
@@ -260,6 +262,12 @@ $('#jobModal').on('show.bs.modal', function (event) {
         formStatus = "";
 
         jobDeleteDisplay = NONE;
+    }
+
+    if (activeUrl === false) {
+        document.getElementById("formUrl").disabled = true;
+    } else {
+        document.getElementById("formUrl").disabled = false;
     }
 
     formDate = formDate.getFullYear() + "-" + ((formDate.getUTCMonth() + 1) < 10 ? "0" + (formDate.getUTCMonth() + 1) : (formDate.getUTCMonth() + 1)) + "-" + (formDate.getUTCDate() < 10 ? "0" + formDate.getUTCDate() : formDate.getUTCDate());
