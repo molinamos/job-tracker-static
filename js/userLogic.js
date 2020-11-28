@@ -4,7 +4,6 @@ if (getFromLocal(ACCESS_TOKEN_EXP) && isStillValid(parseInt(getFromLocal(ACCESS_
     hasToken();
 } else if (getFromLocal(REFRESH_TOKEN_EXP) && isStillValid(parseInt(getFromLocal(REFRESH_TOKEN_EXP)))) {
     refreshUserTokens();
-    hasToken();
 } else {
     noToken();
 }
@@ -20,6 +19,10 @@ function hasToken() {
 function noToken() {
     updateUsername(NOT_LOGGED_IN);
     toggleSignIn();
+
+    localStorage.removeItem(ACCESS_TOKEN_EXP);
+    localStorage.removeItem(REFRESH_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN_EXP);
 
     let notSignedIn = document.getElementById("notSignedInBody");
     let signedIn = document.getElementById("signedInBody");

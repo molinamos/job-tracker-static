@@ -34,6 +34,7 @@ function processToken(tokenObject) {
         saveToLocal(REFRESH_TOKEN_EXP, getEpoch() + SEVEN_DAYS_EPOCH);
     }
 
+    hasToken();
     window.location.href = cognitoIndexUri;
 }
 
@@ -60,5 +61,10 @@ function refreshUserTokens() {
     body[GRANT_TYPE] = REFRESH_TOKEN;
     body[REFRESH_TOKEN] = getFromLocal(REFRESH_TOKEN);
 
-    makeRestCall(cognitoTokenUrl, POST, headers, body, processToken, toConsole);
+    makeRestCall(cognitoTokenUrl, POST, headers, body, processToken, refreshUserTokensError);
+}
+
+function refreshUserTokensError(result) {
+    alert("Unable to refresh token, please sign out and relogin.");
+    noToken();
 }
