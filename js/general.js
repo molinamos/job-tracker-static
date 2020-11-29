@@ -2,9 +2,60 @@ var postNewJobData;
 var deleteJobUrl;
 var tableJobs = [];
 var hideUrls = true;
+var LastEvaluatedKey;
 
 function getUserJobs() {
-    let url = apiGatewayJobByUsername + encodeURI(username);
+    getUserJobs(undefined, undefined);
+}
+
+function getUserJobsNext() {
+    getUserJobs(tableJobs[tableJobs.length -1].url, undefined);
+    document.getElementById("jobPreviousButton").style[DISPLAY] = INLINE;
+}
+
+function getUserJobsPrevious() {
+    let urlHash = tableJobs[0].url;
+    let url = apiGatewayJobByUsername + encodeURI(username) 
+            + (urlHash !== undefined ? "&urlHash=" + urlHash : "");
+
+    let headers = {};
+
+    headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
+
+    makeRestCall(url, GET, headers, null, loadJobsTableReverse, toConsole);
+}
+
+function loadJobsTableReverse(result) {
+    toConsole(result);
+    let jobs = result["Items"];
+
+    LastEvaluatedKey = result["LastEvaluatedKey"] === undefined ? undefined : result["LastEvaluatedKey"].urlHash;
+
+    document.getElementById("jobNextButton").style[DISPLAY] = INLINE;
+
+    if (LastEvaluatedKey !== undefined) {
+        document.getElementById("jobPreviousButton").style[DISPLAY] = INLINE;
+    } else {
+        document.getElementById("jobPreviousButton").style[DISPLAY] = NONE;
+    }
+
+    if (jobs.length === 0) {
+        return;
+    }
+
+    tableJobs = [];
+    for (i = jobs.length - 1; i >= 0; i--) {
+        let job = jobs[i];
+        pushTableJob(job["urlHash"], job.company, job.position, job.description, job.date, job.cooldown, job.status);
+    }
+
+    clearTableJob();
+    updateTableJob();
+}
+
+function getUserJobs(lastEvaluatedKey, urlHash) {
+    let url = apiGatewayJobByUsername + encodeURI(username) 
+            + (lastEvaluatedKey !== undefined ? "&ExclusiveStartKey=" + lastEvaluatedKey : "");
     let headers = {};
 
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
@@ -15,7 +66,8 @@ function getUserJobs() {
 function loadJobsTable(result) {
     toConsole(result);
     let jobs = result["Items"];
-    LastEvaluatedKey = result["LastEvaluatedKey"].urlHash;
+
+    LastEvaluatedKey = result["LastEvaluatedKey"] === undefined ? undefined : result["LastEvaluatedKey"].urlHash;
 
     if (LastEvaluatedKey !== undefined) {
         document.getElementById("jobNextButton").style[DISPLAY] = INLINE;
@@ -23,6 +75,11 @@ function loadJobsTable(result) {
         document.getElementById("jobNextButton").style[DISPLAY] = NONE;
     }
 
+    if (jobs.length === 0) {
+        return;
+    }
+
+    tableJobs = [];
     for(i = 0; i < jobs.length; i++) {
         let job = jobs[i];
         pushTableJob(job["urlHash"], job.company, job.position, job.description, job.date, job.cooldown, job.status);
