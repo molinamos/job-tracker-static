@@ -3,6 +3,7 @@ var deleteJobUrl;
 var tableJobs = [];
 var hideUrls = true;
 var LastEvaluatedKey;
+var sortOrder = "URL";
 
 function getUserJobs() {
     getUserJobs(undefined, undefined);
@@ -17,6 +18,10 @@ function getUserJobsPrevious() {
     let urlHash = tableJobs[0].url;
     let url = apiGatewayJobByUsername + encodeURI(username) 
             + (urlHash !== undefined ? "&urlHash=" + urlHash : "");
+
+    if (sortOrder !== undefined) {
+        url += "&sortOrder=" + sortOrder.toLowerCase();
+    }
 
     let headers = {};
 
@@ -54,8 +59,13 @@ function loadJobsTableReverse(result) {
 }
 
 function getUserJobs(lastEvaluatedKey, urlHash) {
-    let url = apiGatewayJobByUsername + encodeURI(username) 
+    let url = apiGatewayJobByUsername + encodeURI(username)
             + (lastEvaluatedKey !== undefined ? "&ExclusiveStartKey=" + lastEvaluatedKey : "");
+
+    if (sortOrder !== undefined) {
+        url += "&sortOrder=" + sortOrder.toLowerCase();
+    }
+
     let headers = {};
 
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
@@ -357,4 +367,9 @@ function copyJobUrlToClipBoard(jobNumber) {
     });
 }
 
+$(".job-dropdown-item").on('click', function () {
+    sortOrder = this.innerText;
+    document.getElementById("jobSortOrderButton").innerText = this.innerText;
 
+    getUserJobs();
+})

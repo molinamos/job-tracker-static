@@ -69,8 +69,20 @@
           <ul class="pagination">
             <li id="jobPreviousButton" class="page-item" style="display: none;" onclick="getUserJobsPrevious()"><a class="page-link" href="#">Previous</a></li>
             <li id="jobNextButton" class="page-item" style="display: none;" onclick="getUserJobsNext()"><a class="page-link" href="#">Next</a></li>
+              <div class="dropdown" style="margin-left:5px;">
+                  <button id="jobSortOrderButton" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Sort Order
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item job-dropdown-item" href="#">URL</a>
+                      <a class="dropdown-item job-dropdown-item" href="#">Company</a>
+                      <a class="dropdown-item job-dropdown-item" href="#">Date</a>
+                  </div>
+              </div>
           </ul>
         </nav>
+
+
 
         <!-- Button Add Job Modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jobModal" data-title="Add Job">
@@ -130,8 +142,8 @@
 </main>
 </body>
 
-<script src="js/general.js"></script>
 <script src="js/util.js"></script>
+<script src="js/general.js"></script>
 <script src="js/tokenLogic.js"></script>
 <script src="js/userLogic.js"></script>
 </html>
