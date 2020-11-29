@@ -395,4 +395,9 @@ $(".filter-status-dropdown-item").on('click', function () {
     document.getElementById("jobStatusFilterButton").innerText = this.innerText;
     clearTableJob();
     getUserJobs();
-})
+});
+
+$("#jobModalDeleteButton").on('click', function (){
+    document.getElementById("deleteConfirmationBody").innerText = "Are you are sure you want to delete a job from company '"
+        + document.getElementById("formCompany").value + "' with position of '" + document.getElementById("formPosition").value + "'?";
+});
