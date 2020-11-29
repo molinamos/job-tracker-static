@@ -4,6 +4,7 @@ var tableJobs = [];
 var hideUrls = true;
 var LastEvaluatedKey;
 var sortOrder = "URL";
+var filterStatus = "All";
 
 function getUserJobs() {
     getUserJobs(undefined, undefined);
@@ -21,6 +22,10 @@ function getUserJobsPrevious() {
 
     if (sortOrder !== undefined) {
         url += "&sortOrder=" + sortOrder.toLowerCase();
+    }
+
+    if (filterStatus !== undefined && filterStatus !== "All") {
+        url += "&filterStatus=" + encodeURI(filterStatus);
     }
 
     let headers = {};
@@ -66,6 +71,10 @@ function getUserJobs(lastEvaluatedKey, urlHash) {
         url += "&sortOrder=" + sortOrder.toLowerCase();
     }
 
+    if (filterStatus !== undefined && filterStatus !== "All") {
+        url += "&filterStatus=" + encodeURI(filterStatus);
+    }
+
     let headers = {};
 
     headers[AUTHORIZATION] = getFromLocal(ID_TOKEN);
@@ -109,7 +118,7 @@ function postNewJob() {
     data.description = getId("formDescription").value;
     data.date = new Date(getId("formDate").value).toISOString();
     data.cooldown = getId("formCooldown").value;
-    data.status = getId("formStatus").value;
+    data.status = getId("formStatus").innerText;
 
     postNewJobData = data;
 
@@ -334,7 +343,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
         formDescription = "";
         formDate = new Date();
         formCooldown = 90;
-        formStatus = "";
+        formStatus = "Applied";
 
         jobDeleteDisplay = NONE;
     }
@@ -354,7 +363,7 @@ $('#jobModal').on('show.bs.modal', function (event) {
     modal.find('#formDescription')[0].value = formDescription;
     modal.find('#formDate')[0].value = formDate;
     modal.find('#formCooldown')[0].value = formCooldown;
-    modal.find('#formStatus')[0].value = formStatus;
+    modal.find('#formStatus')[0].innerText = formStatus;
 });
 
 
@@ -371,5 +380,19 @@ $(".job-dropdown-item").on('click', function () {
     sortOrder = this.innerText;
     document.getElementById("jobSortOrderButton").innerText = this.innerText;
 
+    getUserJobs();
+});
+
+$(".form-status-dropdown-item").on('click', function () {
+    sortOrder = this.innerText;
+    document.getElementById("formStatus").innerText = this.innerText;
+
+    getUserJobs();
+});
+
+$(".filter-status-dropdown-item").on('click', function () {
+    filterStatus = this.innerText;
+    document.getElementById("jobStatusFilterButton").innerText = this.innerText;
+    clearTableJob();
     getUserJobs();
 })

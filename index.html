@@ -46,8 +46,8 @@
     </div>
 
     <div id="signedInBody" >
+        <caption>List of Jobs</caption>
         <table class="table table-hover">
-            <caption>List of Jobs</caption>
             <thead>
             <tr>
                 <th scope="col">#</th>
@@ -66,19 +66,33 @@
         </table>
 
         <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            <li id="jobPreviousButton" class="page-item" style="display: none;" onclick="getUserJobsPrevious()"><a class="page-link" href="#">Previous</a></li>
-            <li id="jobNextButton" class="page-item" style="display: none;" onclick="getUserJobsNext()" style="margin-right:5px;"><a class="page-link" href="#">Next</a></li>
-              <div class="dropdown">
-                  <button id="jobSortOrderButton" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Sort Order
-                  </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item job-dropdown-item" href="#">URL</a>
-                      <a class="dropdown-item job-dropdown-item" href="#">Company</a>
-                      <a class="dropdown-item job-dropdown-item" href="#">Date</a>
-                  </div>
-              </div>
+            <ul class="pagination">
+                <li id="jobPreviousButton" class="page-item" style="display: none;" onclick="getUserJobsPrevious()"><a class="page-link" href="#">Previous</a></li>
+                <li id="jobNextButton" class="page-item" style="display: none;" onclick="getUserJobsNext()" style="margin-right:5px;"><a class="page-link" href="#">Next</a></li>
+                <div class="dropdown">
+                    <button id="jobSortOrderButton" class="btn btn-secondary dropdown-toggle" style="margin-right:5px;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort Order
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item job-dropdown-item" href="#">URL</a>
+                        <a class="dropdown-item job-dropdown-item" href="#">Company</a>
+                        <a class="dropdown-item job-dropdown-item" href="#">Date</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button id="jobStatusFilterButton" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Status
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">All</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Applied</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Interviewing</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Offer Pending</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Offered</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Accepted</a>
+                        <a class="dropdown-item filter-status-dropdown-item" href="#">Declined</a>
+                    </div>
+                </div>
           </ul>
         </nav>
 
@@ -128,7 +142,19 @@
                 </div>
                 <div class="form-group">
                     <label for="formStatus">Status</label>
-                    <input type="text" class="form-control" id="formStatus" placeholder="Had Phone Interview">
+                    <div class="dropdown">
+                        <button id="formStatus" class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Applied
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Applied</a>
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Interviewing</a>
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Offer Pending</a>
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Offered</a>
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Accepted</a>
+                            <a class="dropdown-item form-status-dropdown-item" href="#">Declined</a>
+                        </div>
+                    </div>
                 </div>
           </div>
           <div class="modal-footer">
